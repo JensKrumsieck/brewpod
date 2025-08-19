@@ -3,23 +3,22 @@ use reqwest::{Client, header::ACCEPT};
 use serde::{Deserialize, Serialize};
 
 pub struct OAuthClient {
+    provider: String,
     client_id: String,
     client_secret: String,
 }
 
 impl OAuthClient {
-    pub fn new(client_id: String, client_secret: String) -> Self {
+    pub fn new<S: ToString>(provider: S, client_id: String, client_secret: String) -> Self {
         OAuthClient {
+            provider: provider.to_string(),
             client_id,
             client_secret,
         }
     }
 
-    pub fn url(&self, domain: &str) -> String {
-        format!(
-            "https://{domain}/login/oauth/authorize?client_id={}",
-            self.client_id
-        )
+    pub fn authorize_url(&self) -> String {
+        format!("{}/authorize?client_id={}", self.provider, self.client_id)
     }
 
     /// Tries to exchange the token from login request to a pair of access and refresh token
@@ -35,7 +34,7 @@ impl OAuthClient {
         ];
 
         let res: OAuthTokenResponse = client
-            .post("https://github.com/login/oauth/access_token")
+            .post(format!("{}/access_token", self.provider))
             .form(&body)
             .send()
             .await?

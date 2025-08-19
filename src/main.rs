@@ -23,7 +23,11 @@ async fn main() -> anyhow::Result<()> {
 
     let client_id = dotenvy::var("CLIENT_ID")?;
     let client_secret = dotenvy::var("CLIENT_SECRET")?;
-    let client = Arc::new(OAuthClient::new(client_id, client_secret));
+    let client = Arc::new(OAuthClient::new(
+        "https://github.com//login/oauth",
+        client_id,
+        client_secret,
+    ));
 
     let listener = TcpListener::bind("localhost:9292").await?;
     info!("listening on http://{}", listener.local_addr()?);
@@ -34,7 +38,7 @@ async fn main() -> anyhow::Result<()> {
             "/login-github",
             get({
                 let client = Arc::clone(&client);
-                || async move { Redirect::temporary(&client.url("github.com")) }
+                || async move { Redirect::temporary(&client.authorize_url()) }
             }),
         )
         .route(

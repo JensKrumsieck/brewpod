@@ -1,7 +1,12 @@
-use std::{collections::HashMap, sync::Arc};
-
-use axum::{Router, extract::Query, response::Redirect, routing::get};
+use axum::{
+    Json, Router,
+    extract::Query,
+    response::Redirect,
+    routing::{get, post},
+};
 use brewpod::oauth::OAuthClient;
+use std::io::Write;
+use std::{collections::HashMap, fs::OpenOptions, sync::Arc};
 use tokio::net::TcpListener;
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -50,6 +55,18 @@ async fn main() -> anyhow::Result<()> {
                     let res = client.request_access_token(&code).await.unwrap();
                     format!("{}, {}", res.access_token, res.refresh_token)
                 }
+            }),
+        )
+        .route(
+            "/webhook",
+            post(|Json(payload): Json<HashMap<String, String>>| async {
+                let mut file = OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open("data.log")
+                    .unwrap();
+                writeln!(file, "{:?}", payload).unwrap();
+                Json(payload)
             }),
         );
 

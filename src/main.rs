@@ -47,7 +47,7 @@ async fn main() -> anyhow::Result<()> {
                 let client = Arc::clone(&client);
                 |Query(params): Query<HashMap<String, String>>| async move {
                     let code = params.get("code").cloned().unwrap_or_default();
-                    let res = client.request_token(&code).await.unwrap();
+                    let res = client.request_access_token(&code).await.unwrap();
                     format!("{}, {}", res.access_token, res.refresh_token)
                 }
             }),

@@ -18,21 +18,51 @@ impl OAuthClient {
     }
 
     pub fn authorize_url(&self) -> String {
-        format!("{}/authorize?client_id={}", self.provider_url, self.client_id)
+        format!(
+            "{}/authorize?client_id={}",
+            self.provider_url, self.client_id
+        )
     }
 
     /// Tries to exchange the token from login request to a pair of access and refresh token
-    pub async fn request_token(&self, code: &str) -> anyhow::Result<OAuthTokenResponse> {
+    pub async fn request_access_token(&self, code: &str) -> anyhow::Result<OAuthTokenResponse> {
         let mut headers = HeaderMap::new();
         headers.append(ACCEPT, HeaderValue::from_static("application/json"));
 
-        let client = Client::builder().default_headers(headers).build()?;
         let body: [(&'static str, &str); 3] = [
             ("client_id", &self.client_id),
             ("client_secret", &self.client_secret),
             ("code", code),
         ];
 
+        let client = Client::builder().default_headers(headers).build()?;
+        let res: OAuthTokenResponse = client
+            .post(format!("{}/access_token", self.provider_url))
+            .form(&body)
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        Ok(res)
+    }
+
+    /// Tries to use the refresh token to re-issue access token
+    pub async fn request_refresh_token(
+        &self,
+        refresh_token: &str,
+    ) -> anyhow::Result<OAuthTokenResponse> {
+        let mut headers = HeaderMap::new();
+        headers.append(ACCEPT, HeaderValue::from_static("application/json"));
+
+        let body = [
+            ("grant_type", "refresh_token"),
+            ("client_id", &self.client_id),
+            ("client_secret", &self.client_secret),
+            ("refresh_token", refresh_token),
+        ];
+
+        let client = Client::builder().default_headers(headers).build()?;
         let res: OAuthTokenResponse = client
             .post(format!("{}/access_token", self.provider_url))
             .form(&body)

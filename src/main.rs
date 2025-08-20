@@ -59,13 +59,18 @@ async fn main() -> anyhow::Result<()> {
         )
         .route(
             "/webhook",
-            post(|Json(payload): Json<HashMap<String, String>>| async {
+            post(|Json(payload): Json<serde_json::Value>| async {
                 let mut file = OpenOptions::new()
                     .create(true)
                     .append(true)
                     .open("data.log")
                     .unwrap();
-                writeln!(file, "{:?}", payload).unwrap();
+                writeln!(
+                    file,
+                    "{}",
+                    serde_json::to_string_pretty(&payload).unwrap()
+                )
+                .unwrap();
                 Json(payload)
             }),
         );

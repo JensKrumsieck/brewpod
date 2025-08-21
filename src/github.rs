@@ -38,6 +38,7 @@ pub struct User {
     login: String,
     name: String,
     site_admin: bool,
+    #[serde(rename = "type")]
     type_: String,
     user_view_type: String,
 }
@@ -47,4 +48,18 @@ pub struct Author {
     pub email: String,
     pub name: String,
     pub username: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Commit {
+    pub added: Vec<String>,
+    pub author: Author,
+    pub committer: Author,
+    pub distince: bool,
+    pub id: String,
+    pub message: String,
+    pub modified: Vec<String>,
+    pub removed: Vec<String>,
+    pub timestamp: String, //TODO: time
+    pub tree_id: String,
 }

@@ -4,7 +4,7 @@ use axum::{
     response::Redirect,
     routing::{get, post},
 };
-use brewpod::oauth::OAuthClient;
+use brewpod::{oauth::OAuthClient, webhook::WebhookEvent};
 use std::io::Write;
 use std::{collections::HashMap, fs::OpenOptions, sync::Arc};
 use tokio::net::TcpListener;
@@ -59,19 +59,22 @@ async fn main() -> anyhow::Result<()> {
         )
         .route(
             "/webhook",
-            post(|Json(payload): Json<serde_json::Value>| async {
+            post(|Json(payload): Json<WebhookEvent>| async {
                 let mut file = OpenOptions::new()
                     .create(true)
                     .append(true)
                     .open("data.log")
                     .unwrap();
-                writeln!(
-                    file,
-                    "{}",
-                    serde_json::to_string_pretty(&payload).unwrap()
-                )
-                .unwrap();
-                Json(payload)
+                match payload {
+                    WebhookEvent::Push(webhook_push) => write!(
+                        file,
+                        "{} pushed to {}",
+                        webhook_push.pusher.username, webhook_push.repository.full_name
+                    )
+                    .unwrap(),
+                }
+
+                "success"
             }),
         );
 

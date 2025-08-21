@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(default)]
 pub struct Repository {
     pub allow_forking: bool,
     pub archived: bool,
@@ -29,7 +30,7 @@ pub struct Repository {
     pub watchers_count: u32,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct User {
     avatar_url: String,
     email: String,
@@ -43,7 +44,7 @@ pub struct User {
     user_view_type: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Author {
     pub email: String,
     pub name: String,
@@ -55,7 +56,7 @@ pub struct Commit {
     pub added: Vec<String>,
     pub author: Author,
     pub committer: Author,
-    pub distince: bool,
+    pub distinct: bool,
     pub id: String,
     pub message: String,
     pub modified: Vec<String>,

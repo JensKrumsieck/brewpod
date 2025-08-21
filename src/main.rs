@@ -69,7 +69,7 @@ async fn main() -> anyhow::Result<()> {
                     WebhookEvent::Push(webhook_push) => write!(
                         file,
                         "{} pushed to {}",
-                        webhook_push.pusher.username, webhook_push.repository.full_name
+                        webhook_push.pusher.name, webhook_push.repository.full_name
                     )
                     .unwrap(),
                 }

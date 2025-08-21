@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use crate::github::{Author, Commit, Repository, User};
+use crate::github::{CommitAuthor, Commit, Repository, User};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
@@ -18,7 +18,7 @@ pub struct WebhookPush {
     pub deleted: bool,
     pub forced: bool,
     pub head_commit: Commit,
-    pub pusher: Author,
+    pub pusher: CommitAuthor,
     #[serde(rename = "ref")]
     pub ref_: String,
     pub repository: Repository,

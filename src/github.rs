@@ -47,18 +47,18 @@ pub struct User {
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 #[serde(default)]
-pub struct Author {
+pub struct CommitAuthor {
     pub email: String,
     pub name: String,
-    pub username: String,
+    pub username: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 #[serde(default)]
 pub struct Commit {
     pub added: Vec<String>,
-    pub author: Author,
-    pub committer: Author,
+    pub author: CommitAuthor,
+    pub committer: CommitAuthor,
     pub distinct: bool,
     pub id: String,
     pub message: String,

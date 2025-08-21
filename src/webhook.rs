@@ -1,7 +1,8 @@
-pub struct WebhookResponse<T>{
-    reponse: T
+pub struct WebhookResponse<T> {
+    reponse: T,
 }
 
 pub struct WebhookPush {
-    commit: String
+    commit: String,
 }
+

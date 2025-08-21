@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
+use time::OffsetDateTime;
 
-#[derive(Serialize, Deserialize, Debug, Default)]
-#[serde(default)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Repository {
     pub allow_forking: bool,
     pub archived: bool,
@@ -25,36 +25,34 @@ pub struct Repository {
     pub size: u32,
     pub stargazers: u32,
     pub stargazers_count: u32,
-    pub updated_at: String, //TODO: Time
+    #[serde(with = "time::serde::rfc3339")]
+    pub updated_at: OffsetDateTime,
     pub watchers: u32,
     pub watchers_count: u32,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default)]
-#[serde(default)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct User {
     avatar_url: String,
-    email: String,
+    email: Option<String>,
     gravatar_id: String,
     id: u64,
     login: String,
-    name: String,
+    name: Option<String>,
     site_admin: bool,
     #[serde(rename = "type")]
     type_: String,
     user_view_type: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default)]
-#[serde(default)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CommitAuthor {
     pub email: String,
     pub name: String,
     pub username: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default)]
-#[serde(default)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Commit {
     pub added: Vec<String>,
     pub author: CommitAuthor,
@@ -64,6 +62,7 @@ pub struct Commit {
     pub message: String,
     pub modified: Vec<String>,
     pub removed: Vec<String>,
-    pub timestamp: String, //TODO: time
+    #[serde(with = "time::serde::rfc3339")]
+    pub timestamp: OffsetDateTime,
     pub tree_id: String,
 }

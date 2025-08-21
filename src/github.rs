@@ -31,6 +31,7 @@ pub struct Repository {
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(default)]
 pub struct User {
     avatar_url: String,
     email: String,
@@ -45,13 +46,15 @@ pub struct User {
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(default)]
 pub struct Author {
     pub email: String,
     pub name: String,
     pub username: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(default)]
 pub struct Commit {
     pub added: Vec<String>,
     pub author: Author,

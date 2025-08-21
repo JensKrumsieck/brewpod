@@ -7,7 +7,9 @@ pub enum WebhookEvent {
     Push(WebhookPush),
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
+
+#[serde(default)]
 pub struct WebhookPush {
     pub after: String, //new HEAD,
     pub before: String,
